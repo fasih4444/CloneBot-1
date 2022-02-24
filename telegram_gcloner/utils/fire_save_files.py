@@ -36,7 +36,8 @@ class MySaveFileThread(threading.Thread):
         chat_id = update.effective_chat.id
         user_id = update.effective_user.id
         gd = GoogleDrive(user_id)
-        message = '╭──────⌈ 📥 Copying In Progress ⌋──────╮\n│\n├ 📂 Target Directory：{}\n'.format(dest_folder['path'])
+        message = '╭──────⌈ 📥 Copying In Progress ⌋──────╮\n│\n├ 📂 Target Directory：{}\n'.format(
+            dest_folder['path'])
         inline_keyboard = InlineKeyboardMarkup(
             [[InlineKeyboardButton(text=f'🚫 Stop', callback_data=f'stop_task,{thread_id}')]])
 
@@ -87,7 +88,8 @@ class MySaveFileThread(threading.Thread):
             command_line += ['--config', gclone_config]
             command_line += [
                 '{}:{{{}}}'.format('gc', folder_id),
-                ('{}:{{{}}}/{}'.format('gc', dest_folder['folder_id'], destination_path))
+                ('{}:{{{}}}/{}'.format('gc',
+                 dest_folder['folder_id'], destination_path))
             ]
 
             logger.debug('command line: ' + str(command_line))
@@ -133,9 +135,11 @@ class MySaveFileThread(threading.Thread):
                     # logger.debug(output)
                     match_total_files = re.search(regex_total_files, output)
                     if match_total_files:
-                        progress_transferred_file = int(match_total_files.group(1))
+                        progress_transferred_file = int(
+                            match_total_files.group(1))
                         progress_total_files = int(match_total_files.group(2))
-                        progress_file_percentage = int(match_total_files.group(3))
+                        progress_file_percentage = int(
+                            match_total_files.group(3))
                         progress_file_percentage_10 = progress_file_percentage // 10
                         if match_total_files.group(4):
                             progress_speed_file = match_total_files.group(4)
@@ -148,11 +152,15 @@ class MySaveFileThread(threading.Thread):
                         progress_size_percentage_10 = progress_size_percentage // 10
                         progress_speed = match_total_size.group(4)
                         progress_eta = match_total_size.group(5)
-                    match_checked_files = re.search(regex_checked_files, output)
+                    match_checked_files = re.search(
+                        regex_checked_files, output)
                     if match_checked_files:
-                        progress_checked_files = int(match_checked_files.group(1))
-                        progress_total_check_files = int(match_checked_files.group(2))
-                    progress_max_percentage_10 = max(progress_size_percentage_10, progress_file_percentage_10)
+                        progress_checked_files = int(
+                            match_checked_files.group(1))
+                        progress_total_check_files = int(
+                            match_checked_files.group(2))
+                    progress_max_percentage_10 = max(
+                        progress_size_percentage_10, progress_file_percentage_10)
                     message_progress = '├──────⌈ Made with Love by MsgSuite ⌋──────' \
                                        '├ 🗂 Source : <a href="https://drive.google.com/open?id={}">{}</a>\n│\n' \
                                        '├ ✔️ Checks： <code>{} / {}</code>\n' \
@@ -160,27 +168,29 @@ class MySaveFileThread(threading.Thread):
                                        '├ 📦 Size：<code>{} / {}</code>\n{}' \
                                        '├ ⚡️Speed：<code>{}</code> \n├⏳ ETA: <code>{}</code>\n' \
                                        '├ ⛩ Progress：[<code>{}</code>] {: >2}%\n│\n' \
-                                       '├──────⌈ ⚡️ MsgSuite CloneBot  ⚡️ ⌋──────' \
+                                       '├──────⌈ ⚡️ MsgSuite clbt  ⚡️ ⌋──────' \
                         .format(
-                        folder_id,
-                        html.escape(destination_path),
-                        progress_checked_files,
-                        progress_total_check_files,
-                        progress_transferred_file,
-                        progress_total_files,
-                        progress_transferred_size,
-                        progress_total_size,
-                        f'Speed：<code>{progress_speed_file}</code>\n' if is_fclone is True else '',
-                        progress_speed,
-                        progress_eta,
-                        '●' * progress_file_percentage_10 + '○' * (
+                            folder_id,
+                            html.escape(destination_path),
+                            progress_checked_files,
+                            progress_total_check_files,
+                            progress_transferred_file,
+                            progress_total_files,
+                            progress_transferred_size,
+                            progress_total_size,
+                            f'Speed：<code>{progress_speed_file}</code>\n' if is_fclone is True else '',
+                            progress_speed,
+                            progress_eta,
+                            '●' * progress_file_percentage_10 + '○' * (
                                 progress_max_percentage_10 - progress_file_percentage_10) + ' ' * (
                                 10 - progress_max_percentage_10),
-                        progress_file_percentage)
+                            progress_file_percentage)
 
-                    match = re.search(r'Failed to Copy: Failed to Make Directory in the Destination', output)
+                    match = re.search(
+                        r'Failed to Copy: Failed to Make Directory in the Destination', output)
                     if match:
-                        message_progress = '{}\n│<code>Destination Write Permission Error.\n Please ensure that you have rights to upload files to the Destination.</code>'.format(message_progress)
+                        message_progress = '{}\n│<code>Destination Write Permission Error.\n Please ensure that you have rights to upload files to the Destination.</code>'.format(
+                            message_progress)
                         temp_message = '{}{}'.format(message, message_progress)
                         # logger.info('Write permission error, please confirm permission'.format())
                         try:
@@ -197,7 +207,8 @@ class MySaveFileThread(threading.Thread):
 
                     match = re.search(r"Couldn't List Directory", output)
                     if match:
-                        message_progress = '{}\n│<code>Source Read permission Error. \n Please ensure that you have rights to read files from the Source Link</code>'.format(message_progress)
+                        message_progress = '{}\n│<code>Source Read permission Error. \n Please ensure that you have rights to read files from the Source Link</code>'.format(
+                            message_progress)
                         temp_message = '{}{}'.format(message, message_progress)
                         # logger.info('Read permission error, please confirm the permission：')
                         try:
@@ -214,7 +225,8 @@ class MySaveFileThread(threading.Thread):
 
                     if message_progress != message_progress_last:
                         if datetime.datetime.now() - progress_update_time > datetime.timedelta(seconds=5):
-                            temp_message = '{}{}'.format(message, message_progress)
+                            temp_message = '{}{}'.format(
+                                message, message_progress)
                             try:
                                 context.bot.edit_message_text(chat_id=chat_id, message_id=message_id,
                                                               text=temp_message, parse_mode=ParseMode.HTML,
@@ -228,31 +240,36 @@ class MySaveFileThread(threading.Thread):
                             progress_update_time = datetime.datetime.now()
 
                     if self.critical_fault:
-                        message_progress = '{}\n│\n│ You have terminated the Cloning Process'.format(message_progress)
+                        message_progress = '{}\n│\n│ You have terminated the Cloning Process'.format(
+                            message_progress)
                         process.terminate()
                         break
 
             rc = process.poll()
-            message_progress_heading, message_progress_content = message_progress.split('\n│', 1)
+            message_progress_heading, message_progress_content = message_progress.split(
+                '\n│', 1)
             link_text = 'Unable to fetch Google Drive Link.'
             try:
-                link = gd.get_folder_link(dest_folder['folder_id'], destination_path)
+                link = gd.get_folder_link(
+                    dest_folder['folder_id'], destination_path)
                 if link:
-                    link_text = '\n│ \n│      👉 <a href="{}">Google Drive Link</a> 👈'.format(link)
+                    link_text = '\n│ \n│      👉 <a href="{}">Google Drive Link</a> 👈'.format(
+                        link)
             except Exception as e:
                 logger.info(str(e))
 
             if self.critical_fault is True:
                 message = '{}{} ❌\n│{}\n│{}\n│'.format(message, message_progress_heading, message_progress_content,
-                                                     link_text)
+                                                       link_text)
             elif progress_file_percentage == 0 and progress_checked_files > 0:
-                message = '{}{} ✅\n│ File Already Exists in the Destination!\n│ {}\n│'.format(message, message_progress_heading, link_text)
+                message = '{}{} ✅\n│ File Already Exists in the Destination!\n│ {}\n│'.format(
+                    message, message_progress_heading, link_text)
             else:
                 message = '{}{}{}\n│{}\n│{}\n│\n│'.format(message,
-                                                      message_progress_heading,
-                                                      '✅' if rc == 0 else '❌',
-                                                      message_progress_content,
-                                                      link_text)
+                                                          message_progress_heading,
+                                                          '✅' if rc == 0 else '❌',
+                                                          message_progress_content,
+                                                          link_text)
 
             try:
                 context.bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=message,
@@ -275,7 +292,8 @@ class MySaveFileThread(threading.Thread):
         update.callback_query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton(text='Done', callback_data='cancel')]]))
 
-        logger.debug('User {} has finished task {}: \n│{}'.format(user_id, thread_id, message))
+        logger.debug('User {} has finished task {}: \n│{}'.format(
+            user_id, thread_id, message))
         tasks = thread_pool.get(user_id, None)
         if tasks:
             for t in tasks:

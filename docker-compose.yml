@@ -1,9 +1,9 @@
 version: "3.9"
 
 services:
-  clonebot:
-    image: ghcr.io/missemily2022/clonebot:new
-    container_name: clonebot
+  clbt:
+    image: ghcr.io/missemily2022/clbt:new
+    container_name: clbt
     environment:
       - telegram_token=${telegram_token}
       - user_ids=${user_ids}
